@@ -1,4 +1,5 @@
 <template>
+  <TodoListNew />
   <section class="container">
     <div class="row justify-content-center m-2">
       <TodoListMain />
@@ -7,15 +8,16 @@
 </template>
 
 <script setup lang="ts">
-import { provide, Ref, ref } from "vue";
+import { provide, readonly, Ref, ref } from "vue";
 import { Todo } from "../types/todo";
 import { useStorage } from "../compositions/localStorage";
 import TodoListMain from "./TodoListMain.vue";
+import TodoListNew from "./TodoListNew.vue";
 
 const { loadTodos, saveTodos, storage_id } = useStorage();
 
 const todos: Ref<Todo[]> = ref([]);
-provide("todos", todos);
+provide("todos", readonly(todos));
 
 const initTodos = (init_todos: Todo[]) => {
   todos.value = init_todos;
@@ -26,7 +28,7 @@ const addTodo = (job: string, date: string) => {
     id: storage_id.value++,
     job,
     date,
-    completed: true,
+    completed: false,
   });
   saveTodos(todos);
 };
@@ -38,8 +40,9 @@ const removeTodo = (id: number) => {
   });
   saveTodos(todos);
 };
+
 const completeTodo = (id: number) => {
-  const findTodo = todos.value.find((todo) => todo.id);
+  const findTodo = todos.value.find((todo) => todo.id === id);
   if (findTodo) {
     findTodo.completed = true;
     saveTodos(todos);

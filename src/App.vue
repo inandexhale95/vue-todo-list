@@ -1,6 +1,7 @@
 <template>
   <header>
-    <hgroup>
+    <hgroup class="my-5">
+      <h1>나의 할일</h1>
       <em>{{ today }}</em>
     </hgroup>
   </header>
@@ -12,7 +13,7 @@
 import { inject } from "vue";
 import TodoListContainer from "./components/TodoListContainer.vue";
 
-const today: string | undefined = inject("today");
+const today: string = inject("today", "");
 </script>
 
 <style scoped>

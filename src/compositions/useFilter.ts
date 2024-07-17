@@ -2,7 +2,7 @@ import { inject, Ref } from "vue";
 import { Todo } from "../types/todo";
 
 export const useFilter = () => {
-  const today: string | undefined = inject("today");
+  const today: string = inject("today", "");
   const fnSort = (a: Todo, b: Todo) => {
     const a_date = Date.parse(a.date);
     const b_date = Date.parse(b.date);
@@ -16,6 +16,8 @@ export const useFilter = () => {
     if (!today) {
       throw new Error(`today 값이 없습니다. ${today}`);
     }
+
+    console.log(todos.value);
 
     return todos.value
       .filter((todo) => todo.date < today && !todo.completed)

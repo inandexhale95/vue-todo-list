@@ -8,7 +8,7 @@
             type="checkbox"
             :checked="todo.completed"
             :disabled="todo.completed"
-            @click="completeTodo && completeTodo(todo.id)"
+            @click="completeTodo(todo.id)"
           />
         </div>
         <div class="input-group-text">
@@ -35,10 +35,6 @@
             </a>
           </li>
         </ul>
-        <div
-          v-show="idx + 1 < data.length"
-          class="col border border-second"
-        ></div>
       </div>
     </div>
   </main>
@@ -50,9 +46,13 @@ import { Todo } from "../types/todo";
 
 defineProps<{ data: Todo[] }>();
 
-const removeTodo: ((id: number) => void) | undefined = inject("removeTodo");
-const completeTodo: ((id: number) => void) | undefined = inject("completeTodo");
-const today: string | undefined = inject("today");
+const removeTodo: (id: number) => void = inject("removeTodo", () => {
+  throw new Error("removeTodo inject failed");
+});
+const completeTodo: (id: number) => void = inject("completeTodo", () => {
+  throw new Error("complete inject failed");
+});
+const today: string = inject("today", "");
 
 const menu = [
   {

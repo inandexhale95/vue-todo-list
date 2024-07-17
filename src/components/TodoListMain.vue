@@ -1,9 +1,10 @@
 <template>
+  <TodoListMenu v-on:change-filter="onChangeFilter" class="p-0" />
   <div v-for="key in Object.keys(filtered_todos)" :key="key" class="mb-3">
     <div v-if="use_category">
       <em>{{ key }}</em>
     </div>
-    <!-- <TodoList :data="filtered_todos[key]" /> -->
+    <TodoList :data="filtered_todos[key]" />
   </div>
 
   <div class="my-2 mt-5">
@@ -18,6 +19,7 @@ import { inject, provide, ref, Ref, watch } from "vue";
 import TodoList from "./TodoList.vue";
 import { Todo } from "../types/todo";
 import { useFilter } from "../compositions/useFilter";
+import TodoListMenu from "./TodoListMenu.vue";
 
 const {
   getPendingTodos,
@@ -28,10 +30,16 @@ const {
 } = useFilter();
 
 const filter = ref(0);
-const filtered_todos: Ref<Todo[]> = ref([]);
+const filtered_todos: Ref<Record<string, Todo[]>> = ref({});
 const pending_todos: Ref<Todo[]> = ref([]);
 const use_category = ref(false);
-const todos: Ref<Todo[]> | undefined = inject("todos");
+
+const provideDefaultTodos = (): Ref<Todo[]> => ref([]);
+const todos: Ref<Todo[]> | undefined = inject(
+  "todos",
+  provideDefaultTodos,
+  true,
+);
 
 interface Filter {
   str: string;
@@ -67,9 +75,7 @@ provide("filters", filters);
 // 그룹화 함수
 const groupBy = (todos: Todo[]): Record<string, Todo[]> => {
   return todos.reduce((acc: Record<string, Todo[]>, cur: Todo) => {
-    if (!acc[cur.date]) {
-      acc[cur.date] = [];
-    }
+    acc[cur.date] = acc[cur.date] || [];
     acc[cur.date].push(cur);
     return acc;
   }, {});
@@ -80,12 +86,12 @@ const onChangeFilter = (filter_idx: string) => {
 };
 
 watch(
-  [() => filter.value, () => todos?.value ?? []],
+  [() => filter.value, todos.value],
   ([new_filter, new_todos], [old_filter, _]) => {
-    pending_todos.value = getPendingTodos(todos!);
+    pending_todos.value = getPendingTodos(todos);
     if (typeof new_filter === "number") {
       let temp_todos = filters[new_filter].func(todos!);
-      filtered_todos.value = Object.values(groupBy(temp_todos)).flat();
+      filtered_todos.value = groupBy(temp_todos);
       use_category.value = filters[new_filter].category;
     }
   },
