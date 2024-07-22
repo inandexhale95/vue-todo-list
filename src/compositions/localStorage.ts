@@ -19,28 +19,24 @@ export const useStorage = () => {
     );
   };
 
-  const loadTodos = (initTodos: (init_todos: Todo[]) => void) => {
+  const loadTodos = (): Todo[] => {
+    let todos: Todo[] = [];
     const data = localStorage.getItem(KEY);
-    let temp_todos: Todo[] = [];
 
     if (data) {
       try {
         const parsedData = JSON.parse(data);
         if (isTodoArray(parsedData)) {
-          temp_todos = parsedData;
-        } else {
-          console.error("Parsed data is not a valid Todo array");
+          todos = parsedData;
         }
-      } catch (error) {
-        console.error("Failed to parse todos from localStorage", error);
+      } catch (err) {
+        console.error(`Parse failed ${err}`);
       }
     }
 
-    temp_todos.forEach((todo, idx) => {
-      todo.id = idx;
-    });
-    storage_obj.storage_id = temp_todos.length;
-    initTodos(temp_todos);
+    todos.forEach((todo, idx) => (todo.id = idx));
+    storage_obj.storage_id = todos.length;
+    return todos;
   };
 
   const saveTodos = (todos: Ref<Todo[]>) => {

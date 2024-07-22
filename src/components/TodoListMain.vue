@@ -20,6 +20,7 @@ import TodoList from "./TodoList.vue";
 import { Todo } from "../types/todo";
 import { useFilter } from "../compositions/useFilter";
 import TodoListMenu from "./TodoListMenu.vue";
+import { Filter } from "../types/filter";
 
 const {
   getPendingTodos,
@@ -35,17 +36,7 @@ const pending_todos: Ref<Todo[]> = ref([]);
 const use_category = ref(false);
 
 const provideDefaultTodos = (): Ref<Todo[]> => ref([]);
-const todos: Ref<Todo[]> | undefined = inject(
-  "todos",
-  provideDefaultTodos,
-  true,
-);
-
-interface Filter {
-  str: string;
-  func: (todos: Ref<Todo[]>) => Todo[];
-  category: boolean;
-}
+const todos: Ref<Todo[]> = inject("todos", provideDefaultTodos, true);
 
 const filters: Record<number, Filter> = {
   0: {
@@ -90,7 +81,7 @@ watch(
   ([new_filter, new_todos], [old_filter, _]) => {
     pending_todos.value = getPendingTodos(todos);
     if (typeof new_filter === "number") {
-      let temp_todos = filters[new_filter].func(todos!);
+      let temp_todos = filters[new_filter].func(todos);
       filtered_todos.value = groupBy(temp_todos);
       use_category.value = filters[new_filter].category;
     }

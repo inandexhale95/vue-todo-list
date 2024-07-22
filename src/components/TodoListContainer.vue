@@ -17,11 +17,7 @@ import TodoListNew from "./TodoListNew.vue";
 const { loadTodos, saveTodos, storage_id } = useStorage();
 
 const todos: Ref<Todo[]> = ref([]);
-provide("todos", readonly(todos));
-
-const initTodos = (init_todos: Todo[]) => {
-  todos.value = init_todos;
-};
+todos.value = loadTodos();
 
 const addTodo = (job: string, date: string) => {
   todos.value.push({
@@ -49,11 +45,10 @@ const completeTodo = (id: number) => {
   }
 };
 
+provide("todos", readonly(todos));
 provide("addTodo", addTodo);
 provide("removeTodo", removeTodo);
 provide("completeTodo", completeTodo);
-
-loadTodos(initTodos);
 </script>
 
 <style scoped></style>

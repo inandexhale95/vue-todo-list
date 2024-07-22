@@ -26,20 +26,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, Ref, ref, watch } from "vue";
-import { Todo } from "../types/todo";
+import { computed, inject, ref, watch } from "vue";
+import { Filter } from "../types/filter";
 
 const emits = defineEmits(["change-filter"]);
 
-interface Filter {
-  str: string;
-  func: (todos: Ref<Todo[]>) => Todo[];
-  category: boolean;
-}
-
 const filters: Record<string, Filter> = inject(
   "filters",
-  {} as Record<string, Filter>,
+  () => {
+    throw new Error(`filterList inject failed`);
+  },
+  true,
 );
 const filter = ref(0);
 

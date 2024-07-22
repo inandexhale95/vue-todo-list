@@ -13,12 +13,6 @@ export const useFilter = () => {
   };
 
   const getPendingTodos = (todos: Ref<Todo[]>) => {
-    if (!today) {
-      throw new Error(`today 값이 없습니다. ${today}`);
-    }
-
-    console.log(todos.value);
-
     return todos.value
       .filter((todo) => todo.date < today && !todo.completed)
       .slice()
@@ -26,10 +20,6 @@ export const useFilter = () => {
   };
 
   const getActiveTodayTodos = (todos: Ref<Todo[]>) => {
-    if (!today) {
-      throw new Error(`today 값이 없습니다. ${today}`);
-    }
-
     return todos.value
       .filter((todo) => todo.date === today && !todo.completed)
       .slice()
@@ -37,10 +27,6 @@ export const useFilter = () => {
   };
 
   const getCompletedTodayTodos = (todos: Ref<Todo[]>) => {
-    if (!today) {
-      throw new Error(`today 값이 없습니다. ${today}`);
-    }
-
     return todos.value
       .filter((todo) => todo.date === today && todo.completed)
       .slice()
@@ -49,7 +35,7 @@ export const useFilter = () => {
 
   const getAllTodayTodos = (todos: Ref<Todo[]>) => {
     return getActiveTodayTodos(todos)
-      ?.concat(getCompletedTodayTodos(todos))
+      .concat(getCompletedTodayTodos(todos))
       .slice()
       .sort(fnSort);
   };
